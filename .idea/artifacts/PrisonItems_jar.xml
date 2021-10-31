@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="PrisonItems:jar">
+    <output-path>$PROJECT_DIR$/../../PLUGIN TEST SERVER/plugins</output-path>
+    <root id="archive" name="PrisonItems.jar">
+      <element id="module-output" name="PrisonItems" />
+    </root>
+  </artifact>
+</component>

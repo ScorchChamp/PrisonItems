@@ -1,0 +1,1 @@
+package com.scorchchamp.PrisonItems.Rarities;

@@ -1,0 +1,63 @@
+name: PrisonItems
+main: com.scorchchamp.PrisonItems.PrisonItems
+version: 0.0.1
+api-version: 1.13
+
+author: ScorchChamp
+commands:
+   prisonitems:
+      description: Command to manage PrisonItems
+      aliases: [pi]
+      usage: |
+         Use /help prisonitems for more information
+         /prisonitems gui <gui_number> - open gui <gui_number>
+         /prisonitems give <username> <item_id> - give <item_id> to <username>
+         /prisonitems search <ITEM> - open gui with found items
+      permission: prisonitems.prisonitems
+      permission-message: You don't have <permission>
+   prisonitems gui:
+      description: Command to open PrisonItemGui
+      aliases: [pi gui, pi inv]
+      usage: |
+         Use /help prisonitems for more information
+         /prisonitems gui <gui_number> - open a gui
+      permission: prisonitems.gui
+      permission-message: You don't have <permission>
+   prisonitems give:
+      description: Command to give a PrisonItem to username
+      aliases: [pi give]
+      usage: |
+         Use /help prisonitems for more information
+         /prisonitems give <username> <item_id> - give <item_id> to <username>
+      permission: prisonitems.give
+      permission-message: You don't have <permission>
+   prisonitems search:
+      description: Command to open GUI with query
+      aliases: [pi search]
+      usage: |
+        Use /help prisonitems for more information
+        /prisonitems search <ITEM> - open gui with found items
+      permission: prisonitems.search
+      permission-message: You don't have <permission>
+permissions:
+  prisonitems.prisonitems:
+    description: Allows prisonitems help command
+    default: op
+  prisonitems.gui:
+    description: Allows PrisonItems gui command
+    default: op
+  prisonitems.give:
+    description: Allows PrisonItems gui command
+    default: op
+  prisonitems.search:
+    description: Allows PrisonItems give command
+    default: op
+  
+  prisonitems.*:
+   description: Wildcard permission for PrisonItems
+   default: op
+   children:
+     prisonitems.prisonitems: true
+     prisonitems.gui: true
+     prisonitems.give: true
+     prisonitems.search: true
