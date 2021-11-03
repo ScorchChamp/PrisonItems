@@ -8,7 +8,6 @@ import com.scorchchamp.PrisonItems.PrisonItems;
 import com.scorchchamp.PrisonItems.Rarities.Rarity;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;

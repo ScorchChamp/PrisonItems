@@ -16,11 +16,6 @@ public class CommandHandler implements CommandExecutor {
 	private final List<Gui> guis = new ArrayList<>();
 	private final int guiSize = 54;
 
-	// private final Gui inv = new Gui();
-	public CommandHandler(List<PrisonItem> items) {
-		PrisonItems.items = items;
-	}
-
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 2 && args[0].equals("gui")) {
 			try {
