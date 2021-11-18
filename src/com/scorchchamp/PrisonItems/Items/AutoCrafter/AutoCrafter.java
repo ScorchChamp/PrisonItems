@@ -85,6 +85,8 @@ public class AutoCrafter extends PrisonItem implements Listener {
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
+        if (e.getCurrentItem() == null) return;
+
         ItemStack ItemInHand = e.getWhoClicked().getItemInHand();
         if (e.getInventory() != inv) return;
         if (INPUTS.contains(e.getRawSlot())) {
@@ -127,10 +129,16 @@ public class AutoCrafter extends PrisonItem implements Listener {
 
     @EventHandler
     public void onOpen(PlayerInteractEvent event){
+        ItemStack usedItem = event.getItem();
+        if (usedItem == null) return;
+
+        PrisonItem prisonItem = PrisonItems.getPrisonItemFromItemStack(usedItem);
+        if (prisonItem == null) return;
+
         Action action = event.getAction();
 
         if(action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.RIGHT_CLICK_AIR)){
-            if(PrisonItems.getPrisonItemFromItemStack(event.getItem()).getID().equals(getID())) {
+            if(prisonItem.getID().equals(getID())) {
                 event.setCancelled(true);
                 if (DISABLED) event.getPlayer().sendMessage(PrisonItems.MESSAGES.interfaceDisabled);
                 else this.openCrafter(event.getPlayer());

@@ -7,9 +7,13 @@ import com.scorchchamp.PrisonItems.Anvil.CustomAnvil;
 import com.scorchchamp.PrisonItems.Crafting.CraftingGui;
 import com.scorchchamp.PrisonItems.Items.*;
 import com.scorchchamp.PrisonItems.Items.AutoCrafter.AutoCrafter;
-import com.scorchchamp.PrisonItems.Items.Drillers.DrillerTemplate;
+import com.scorchchamp.PrisonItems.Items.Drillers.DirtDriller;
+import com.scorchchamp.PrisonItems.Items.Drillers.StoneDriller;
+import com.scorchchamp.PrisonItems.Items.Drillers.TemplateDriller;
+import com.scorchchamp.PrisonItems.Items.ImpossibleItems.Barrier;
+import com.scorchchamp.PrisonItems.Items.ImpossibleItems.Bedrock;
+import com.scorchchamp.PrisonItems.Items.ImpossibleItems.ImpossibleItem;
 import org.bukkit.*;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -30,6 +34,7 @@ public class PrisonItems extends JavaPlugin {
 	public static final Messages MESSAGES = new Messages();
 	private static RefreshInvOnJoin player_join;
 	private static CommandHandler command_handler;
+	private static BreakBlockEventHandler breakBlockEventHandler;
 
 	private CustomAnvil customAnvil;
 	private CraftingGui customCrafting;
@@ -44,6 +49,7 @@ public class PrisonItems extends JavaPlugin {
 		customCrafting = new CraftingGui();
 		player_join = new RefreshInvOnJoin();
 		command_handler = new CommandHandler();
+		breakBlockEventHandler = new BreakBlockEventHandler();
 
 		items = initItems();
 		getCommand("prisonitems").setExecutor(command_handler);
@@ -64,30 +70,45 @@ public class PrisonItems extends JavaPlugin {
 	public static void refreshPlayerInventory(Player p) {
 		for (ItemStack item : p.getInventory().getContents()) {
 			if (item == null) continue;
-			if (!item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING)) continue;
 			PrisonItem pi = getPrisonItemFromItemStack(item);
 			ItemMeta meta = item.getItemMeta();
 			if (pi == null) {
-				meta.setDisplayName(ChatColor.RED + "DISABLED: " + meta.getPersistentDataContainer().get(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING));
-				item.setItemMeta(meta);
-				item.setType(Material.BARRIER);
-				continue;
-			}
-			meta.setDisplayName(pi.getItemMeta().getDisplayName());
-			meta.setLore(pi.getItemMeta().getLore());
+				if (hasPrisonItemID(item)) {
+					meta.setDisplayName(ChatColor.RED + "DISABLED: " + meta.getPersistentDataContainer().get(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING));
+					item.setItemMeta(meta);
+					item.setType(Material.BARRIER);
+				} else {
+					meta.setDisplayName(ChatColor.RESET + "" + ChatColor.BOLD + item.getType().toString().replace("_", " ").toLowerCase());
+					meta.setLore(new PrisonItem().getDefaultItem().getItemMeta().getLore());
+					item.setItemMeta(meta);
+				}
+			} else {
+				meta.setDisplayName(pi.getItemMeta().getDisplayName());
+				meta.setLore(pi.getItemMeta().getLore());
 
-			item.setItemMeta(meta);
-			item.setType(pi.getMaterial());
+				item.setItemMeta(meta);
+				item.setType(pi.getMaterial());
+			}
 		}
 	}
 
 	public static PrisonItem getPrisonItemFromItemStack(ItemStack item) {
-		if (!item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING)) return null;
+		if (!hasPrisonItemID(item)) {
+			for (PrisonItem pi : getItems())
+				if (pi.isAnyItemMaterialMatches() && pi.getMaterial().equals(item.getType())) return pi;
+			return null;
+		}
 		String item_id = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING);
-		for (PrisonItem pi : getItems()) if (item_id.equals(pi.getID())) return pi;
+		for (PrisonItem pi : getItems()) {
+			if (item_id.equals(pi.getID())) return pi;
+		}
 		return null;
 	}
 
+	public static boolean hasPrisonItemID(ItemStack item) {
+		if (item == null) return false;
+		return item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(PrisonItems.instance, "item_id"), PersistentDataType.STRING);
+	}
 	public static PrisonItem getPrisonItemFromID(String ID) {
 		for (PrisonItem pi : getItems()) if (ID.equals(pi.getID())) return pi;
 		return null;
@@ -100,6 +121,6 @@ public class PrisonItems extends JavaPlugin {
 	}
 
 	private static List<PrisonItem> initItems() {
-		return Arrays.asList(new ImpossibleItem(), new DrillerTemplate(), new AutoCrafter());
+		return Arrays.asList(new AutoCrafter(), new DirtDriller(), new StoneDriller(), new Bedrock(), new Barrier());
 	}
 }
